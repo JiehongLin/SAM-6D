@@ -1,6 +1,8 @@
+import os
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
+import torch.utils.model_zoo as model_zoo
 from functools import partial
 import timm.models.vision_transformer
 from model_utils import (
@@ -43,7 +45,7 @@ class ViT_AE(nn.Module):
         self.embed_dim = cfg.embed_dim
         self.out_dim = cfg.out_dim
         self.use_pyramid_feat = cfg.use_pyramid_feat
-        self.vit_checkpoint = cfg.vit_checkpoint
+        self.pretrained = cfg.pretrained
 
         if self.vit_type == 'vit_base':
             self.vit = ViT(
@@ -73,18 +75,24 @@ class ViT_AE(nn.Module):
         else:
             assert False
 
+        if self.pretrained:
+            vit_checkpoint = os.path.join('checkpoints', 'mae_pretrain_'+ self.vit_type +'.pth')
+            if not os.path.isdir(vit_checkpoint):
+                if not os.path.isdir('checkpoints'):
+                    os.makedirs('checkpoints')
+                model_zoo.load_url('https://dl.fbaipublicfiles.com/mae/pretrain/mae_pretrain_'+ self.vit_type +'.pth', 'checkpoints')
 
-        checkpoint = torch.load(self.vit_checkpoint, map_location='cpu')
-        print("Load pre-trained checkpoint from: %s" % self.vit_checkpoint)
-        checkpoint_model = checkpoint['model']
-        state_dict = self.vit.state_dict()
-        for k in ['head.weight', 'head.bias']:
-            if k in checkpoint_model and checkpoint_model[k].shape != state_dict[k].shape:
-                print(f"Removing key {k} from pretrained checkpoint")
-                del checkpoint_model[k]
-        # interpolate position embedding
-        interpolate_pos_embed(self.vit, checkpoint_model)
-        msg = self.vit.load_state_dict(checkpoint_model, strict=False)
+            checkpoint = torch.load(vit_checkpoint, map_location='cpu')
+            print("load pre-trained checkpoint from: %s" % vit_checkpoint)
+            checkpoint_model = checkpoint['model']
+            state_dict = self.vit.state_dict()
+            for k in ['head.weight', 'head.bias']:
+                if k in checkpoint_model and checkpoint_model[k].shape != state_dict[k].shape:
+                    print(f"Removing key {k} from pretrained checkpoint")
+                    del checkpoint_model[k]
+            # interpolate position embedding
+            interpolate_pos_embed(self.vit, checkpoint_model)
+            msg = self.vit.load_state_dict(checkpoint_model, strict=False)
 
 
     def forward(self, x):
