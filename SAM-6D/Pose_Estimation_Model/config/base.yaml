@@ -1,0 +1,104 @@
+NAME_PROJECT: SAM-6D
+
+optimizer:
+  type : Adam
+  lr   : 0.0001
+  betas: [0.5, 0.999]
+  eps  : 0.000001
+  weight_decay: 0.0
+
+lr_scheduler:
+  type: WarmupCosineLR
+  max_iters: 600000
+  warmup_factor: 0.001
+  warmup_iters: 1000
+
+model:
+  coarse_npoint: 196
+  fine_npoint: 2048
+  feature_extraction:
+    vit_type: vit_base
+    up_type: linear
+    embed_dim: 768
+    out_dim: 256
+    use_pyramid_feat: True
+    pretrained: True
+  geo_embedding:
+    sigma_d: 0.2
+    sigma_a: 15
+    angle_k: 3
+    reduction_a: max
+    hidden_dim: 256
+  coarse_point_matching:
+    nblock: 3
+    input_dim: 256
+    hidden_dim: 256
+    out_dim: 256
+    temp: 0.1
+    sim_type: cosine
+    normalize_feat: True
+    loss_dis_thres: 0.15
+    nproposal1: 6000
+    nproposal2: 300
+  fine_point_matching:
+    nblock: 3
+    input_dim: 256
+    hidden_dim: 256
+    out_dim: 256
+    pe_radius1: 0.1
+    pe_radius2: 0.2
+    focusing_factor: 3
+    temp: 0.1
+    sim_type: cosine
+    normalize_feat: True
+    loss_dis_thres: 0.15
+
+
+
+train_dataset:
+  name: training_dataset
+  data_dir: ../Data/MegaPose-Training-Data
+  img_size: 224
+  n_sample_observed_point: 2048
+  n_sample_model_point: 2048
+  n_sample_template_point: 5000
+  min_visib_fract: 0.1
+  min_px_count_visib: 512
+  shift_range: 0.01
+  rgb_mask_flag: True
+  dilate_mask: True
+
+train_dataloader:
+  bs            : 12
+  num_workers   : 24
+  shuffle       : True
+  drop_last     : True
+  pin_memory    : False
+
+
+
+test_dataset:
+  name: bop_test_dataset
+  data_dir: ../Data/BOP
+  template_dir: ../Data/BOP-Templates
+  img_size: 224
+  n_sample_observed_point: 2048
+  n_sample_model_point: 1024
+  n_sample_template_point: 5000
+  minimum_n_point: 8
+  rgb_mask_flag: True
+  seg_filter_score: 0.25
+  n_template_view: 8
+
+
+test_dataloader:
+  bs            : 16
+  num_workers   : 16
+  shuffle       : False
+  drop_last     : False
+  pin_memory    : False
+
+
+rd_seed: 1
+training_epoch: 15
+iters_to_print: 50
