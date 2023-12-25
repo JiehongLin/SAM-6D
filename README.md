@@ -1,6 +1,6 @@
 # <p align="center"> <font color=#008000>SAM-6D</font>: Segment Anything Model Meets Zero-Shot 6D Object Pose Estimation </p>
 
-####  <p align="center"> [Jiehong Lin](https://jiehonglin.github.io/), Lihua Liu, Dekun Lu, [Kui Jia](http://kuijia.site/)</p>
+####  <p align="center"> [Jiehong Lin](https://jiehonglin.github.io/), [Lihua Liu](https://github.com/foollh), [Dekun Lu](https://github.com/WuTanKun), [Kui Jia](http://kuijia.site/)</p>
 #### <p align="center">[[Paper]](https://arxiv.org/abs/2311.15707) </p>
 
 <!-- <p align="center">
