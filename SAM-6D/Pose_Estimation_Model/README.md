@@ -42,7 +42,7 @@ python test_bop.py --gpus 0 --model pose_estimation_model --config config/base.y
 ```
 The string "DATASET" could be set as `lmo`, `icbin`, `itodd`, `hb`, `tless`, `tudl`, `ycbv`, or `all`.
 
-## Acknowledgement
+## Acknowledgements
 - [MegaPose](https://github.com/megapose6d/megapose6d)
 - [GDRNPP](https://github.com/shanice-l/gdrnpp_bop2022)
 - [GeoTransformer](https://github.com/qinzheng93/GeoTransformer)
