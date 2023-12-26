@@ -66,7 +66,7 @@ You may also download the `train_pbr` data of the datasets for template selectio
 * cv2
 
 
-### Template Rendering of training objects
+### Template Rendering of Training Objects
 
 We generate two-view templates for each training object via [Blenderproc](https://github.com/DLR-RM/BlenderProc). You may run the following commands to render the templates for `MegaPose-GSO` dataset:
 
