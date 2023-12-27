@@ -1,0 +1,11 @@
+defaults:
+  - user: default
+  - machine: local
+  - data: bop
+  - _self_
+
+
+level: 2
+disable_output: true
+num_workers: 4
+gpus: "0,1,2,3"

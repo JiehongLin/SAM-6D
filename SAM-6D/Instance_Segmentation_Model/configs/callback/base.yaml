@@ -1,0 +1,3 @@
+defaults:
+  - checkpoint: base
+  - lr: base

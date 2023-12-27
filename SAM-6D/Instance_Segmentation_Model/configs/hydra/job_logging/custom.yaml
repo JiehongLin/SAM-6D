@@ -1,0 +1,62 @@
+version: 1
+
+filters:
+  onlyimportant:
+    (): utils.logging.LevelsFilter
+    levels:
+    - CRITICAL
+    - ERROR
+    - WARNING
+  noimportant:
+    (): utils.logging.LevelsFilter
+    levels:
+    - INFO
+    - DEBUG
+    - NOTSET
+
+formatters:
+  simple:
+    format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+    datefmt: '%d/%m/%y %H:%M:%S'
+
+  colorlog:
+    (): colorlog.ColoredFormatter
+    format: '[%(cyan)s%(asctime)s%(reset)s][%(blue)s%(name)s%(reset)s][%(log_color)s%(levelname)s%(reset)s]
+      - %(message)s'
+    datefmt: '%d/%m/%y %H:%M:%S'
+
+  log_colors:
+    DEBUG: purple
+    INFO: green
+    WARNING: yellow
+    ERROR: red
+    CRITICAL: red
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: colorlog
+    stream: ext://sys.stdout
+
+  file_out:
+    class: logging.FileHandler
+    formatter: simple
+    filename: logs.out
+    filters:
+    - noimportant
+
+  file_err:
+    class: logging.FileHandler
+    formatter: simple
+    filename: logs.err
+    filters:
+    - onlyimportant
+
+root:
+    level: ${logger_level}
+    handlers:
+    - console
+    - file_out
+    - file_err
+
+disable_existing_loggers: false

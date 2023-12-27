@@ -1,0 +1,36 @@
+name: sam6d
+channels:
+  - xformers
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - python=3.9.6
+  - pip:
+    - torch
+    - torchvision
+    - omegaconf
+    - torchmetrics==0.10.3
+    - fvcore
+    - iopath
+    - xformers==0.0.18
+    - opencv-python 
+    - pycocotools 
+    - matplotlib 
+    - onnxruntime 
+    - onnx
+    - scipy
+    - ffmpeg
+    - hydra-colorlog
+    - hydra-core
+    - gdown
+    - pytorch-lightning==1.8.1
+    - pandas
+    - ruamel.yaml
+    - pyrender
+    - wandb
+    - distinctipy
+    - imageio
+# bop https://github.com/thodan/bop_toolkit.git

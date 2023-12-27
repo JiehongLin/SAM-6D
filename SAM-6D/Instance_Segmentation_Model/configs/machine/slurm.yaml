@@ -1,0 +1,12 @@
+name: slurm
+
+# specific attributes to this machine
+batch_size: 16
+num_workers: 10
+
+# Define trainer
+defaults:
+  - trainer: slurm
+
+dryrun: True
+root_dir: ${user.slurm_root_dir}

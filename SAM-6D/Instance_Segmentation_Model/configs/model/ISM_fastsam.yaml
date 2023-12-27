@@ -1,0 +1,30 @@
+_target_: model.detector.Instance_Segmentation_Model
+log_interval: 5
+log_dir: ${save_dir}
+segmentor_width_size: 640 # make it stable
+descriptor_width_size: 640
+visible_thred: 0.5
+pointcloud_sample_num: 2048
+
+defaults:
+  - segmentor_model: fast_sam
+  - descriptor_model: dinov2
+  
+post_processing_config:
+  mask_post_processing:
+    min_box_size: 0.05 # relative to image size 
+    min_mask_size: 3e-4 # relative to image size
+  nms_thresh: 0.25
+
+matching_config: 
+  metric:
+    _target_: model.loss.PairwiseSimilarity
+    metric: cosine
+    chunk_size: 16
+  aggregation_function: avg_5
+  confidence_thresh: 0.2
+
+onboarding_config:
+  rendering_type: pbr
+  reset_descriptors: False
+  level_templates: 0 # 0 is coarse, 1 is medium, 2 is dense

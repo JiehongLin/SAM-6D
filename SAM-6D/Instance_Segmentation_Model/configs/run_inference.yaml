@@ -1,0 +1,11 @@
+defaults:
+  - user: default
+  - machine: local
+  - callback: base 
+  - data: bop
+  - model: ISM_sam
+  - _self_
+
+save_dir: ./logs/${name_exp}
+name_exp: ISM_exps
+dataset_name:

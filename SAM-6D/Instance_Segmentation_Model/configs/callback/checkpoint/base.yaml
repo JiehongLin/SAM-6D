@@ -1,0 +1,7 @@
+_target_: pytorch_lightning.callbacks.ModelCheckpoint
+
+dirpath: ${save_dir}/checkpoints
+save_last: true
+verbose: true
+save_top_k: -1
+every_n_train_steps: 10000 # number of backprop step

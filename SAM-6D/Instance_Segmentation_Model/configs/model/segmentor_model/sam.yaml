@@ -1,0 +1,12 @@
+_target_: model.sam.CustomSamAutomaticMaskGenerator
+points_per_batch: 64
+stability_score_thresh: 0.85
+box_nms_thresh: 0.7
+min_mask_region_area: 0
+crop_overlap_ratio: 
+pred_iou_thresh: 0.88
+segmentor_width_size: ${model.segmentor_width_size}
+sam:
+  _target_: model.sam.load_sam
+  model_type: vit_h
+  checkpoint_dir: ./checkpoints/segment-anything/

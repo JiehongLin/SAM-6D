@@ -1,0 +1,20 @@
+version: 1
+
+formatters:
+  colorlog:
+    (): colorlog.ColoredFormatter
+    format: '[%(cyan)s%(asctime)s%(reset)s][%(purple)sHYDRA%(reset)s] %(message)s'
+    datefmt: '%d/%m/%y %H:%M:%S'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: colorlog
+    stream: ext://sys.stdout
+
+root:
+  level: INFO
+  handlers:
+  - console
+
+disable_existing_loggers: false

@@ -1,0 +1,7 @@
+_target_: model.fast_sam.FastSAM
+checkpoint_path: ./checkpoints/FastSAM/FastSAM-x.pt
+segmentor_width_size: ${model.segmentor_width_size}
+config:
+  iou_threshold: 0.9
+  conf_threshold: 0.05
+  max_det: 200

@@ -1,0 +1,12 @@
+  _target_: model.dinov2.CustomDINOv2
+  model_name: dinov2_vitl14
+  # model: 
+  #   _target_: torch.hub.load
+  #   repo_or_dir: facebookresearch/dinov2
+  #   model: ${model.descriptor_model.model_name}
+  checkpoint_dir: ./checkpoints/dinov2/
+  token_name: x_norm_clstoken
+  descriptor_width_size: ${model.descriptor_width_size}
+  image_size: 224
+  chunk_size: 16
+  validpatch_thresh: 0.5

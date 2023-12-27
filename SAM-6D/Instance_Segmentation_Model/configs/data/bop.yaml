@@ -1,0 +1,95 @@
+root_dir: ${machine.root_dir}/BOP/
+source_url: https://bop.felk.cvut.cz/media/data/bop_datasets/
+unzip_mode: unzip
+
+reference_dataloader:
+  _target_: provider.bop.BOPTemplate
+  obj_ids:
+  template_dir: ${machine.root_dir}/BOP/
+  level_templates: 0
+  pose_distribution: all
+  processing_config:
+    image_size: ${model.descriptor_model.image_size}
+    max_num_scenes: 10 # config for reference frames selection
+    max_num_frames: 500
+    min_visib_fract: 0.8
+    num_references: 200 
+    use_visible_mask: True
+
+query_dataloader:
+  _target_: provider.bop.BaseBOPTest
+  root_dir: ${machine.root_dir}/BOP/
+  split:
+  reset_metaData: True
+  processing_config:
+    image_size: ${model.descriptor_model.image_size}
+    
+train_datasets:
+  megapose-gso:
+    identifier: bop23_datasets/megapose-gso/gso_models.json
+    mapping_image_key: /bop23_datasets/megapose-gso/train_pbr_web/key_to_shard.json
+    prefix: bop23_datasets/megapose-gso/train_pbr_web/
+    shard_ids: [0, 1039]
+  megapose-shapenet:
+    identifier: bop23_datasets/megapose-shapenet/shapenet_models.json
+    mapping_image_key: bop23_datasets/megapose-shapenet/train_pbr_web/key_to_shard.json
+    prefix: bop23_datasets/megapose-shapenet/train_pbr_web
+    shard_ids: [0, 1039]
+
+datasets: 
+  lm:
+    cad: lm_models.zip
+    test: lm_test_bop19.zip
+    pbr_train: lm_train_pbr.zip
+    obj_names: [001_ape, 002_benchvise, 003_bowl, 004_camera, 005_can, 006_cat, 007_cup, 008_driller, 009_duck, 010_eggbox, 011_glue, 012_holepuncher, 013_iron, 014_lamp, 015_phone]
+  lmo:
+    cad: lmo_models.zip
+    test: lmo_test_bop19.zip
+    pbr_train: lm_train_pbr.zip
+    obj_names: [001_ape, 005_can, 006_cat, 008_driller, 009_duck, 010_eggbox, 011_glue, 012_holepuncher]
+  tless:
+    cad: tless_models.zip
+    test: tless_test_primesense_bop19.zip
+    pbr_train: tless_train_pbr.zip
+    obj_names: [001_obj, 002_obj, 003_obj, 004_obj, 005_obj, 006_obj, 007_obj, 008_obj, 009_obj, 010_obj, 011_obj, 012_obj, 013_obj, 014_obj, 015_obj, 016_obj, 017_obj, 018_obj, 019_obj, 020_obj, 021_obj, 022_obj, 023_obj, 024_obj, 025_obj, 026_obj, 027_obj, 028_obj, 029_obj, 030_obj]
+  itodd:
+    cad: itodd_models.zip
+    test: itodd_test_bop19.zip
+    pbr_train: itodd_train_pbr.zip
+    obj_names: [001_obj, 002_obj, 003_obj, 004_obj, 005_obj, 006_obj, 007_obj, 008_obj, 009_obj, 010_obj, 011_obj, 012_obj, 013_obj, 014_obj, 015_obj, 016_obj, 017_obj, 018_obj, 019_obj, 020_obj, 021_obj, 022_obj, 023_obj, 024_obj, 025_obj, 026_obj, 027_obj, 028_obj]
+  hb:
+    cad: hb_models.zip
+    test: hb_test_primesense_bop19.zip
+    pbr_train: hb_train_pbr.zip
+    obj_names: [001_red_teddy, 002_bench_wise, 003_car, 004_white_cow, 005_white_pig, 006_white_cup, 007_driller, 008_green_rabbit, 009_holepuncher, 010_brown_unknown, 011_brown_unknown, 012_black_unknown, 013_black_unknown, 014_white_painter, 015_small_unkown, 016_small_unkown, 017_small_unkown, 018_cake_box, 019_minion, 020_colored_dog, 021_phone, 022_animal, 023_yellow_dog, 024_cassette_player, 025_red_racing_car, 026_motobike,  027_heels, 028_dinosaur, 029_tea_box, 030_animal, 031_japanese_toy, 032_white_racing_car, 033_yellow_rabbit]
+  hope:
+    cad: hope_models.zip
+    test: hope_test_bop19.zip
+    obj_names: [001_alphabet_soup, 002_bbq_sauce, 003_butter, 004_cherries, 005_chocolate_pudding, 006_cookies, 007_corn, 008_cream_cheese, 009_granola_bar, 010_green_bean, 011_tomato_sauce, 012_macaroni_cheese, 013_mayo, 014_milk, 015_mushroom, 016_mustard, 017_orange_juice, 018_parmesa_cheese, 019_peaches, 020_peaches_and_carrot, 021_pineapple, 022_popcorn, 023_raisins, 024_ranch_dressing, 025_spaghetti, 026_tomato_sauce,  027_tuna, 028_yogurt]
+  ycbv:
+    cad: ycbv_models.zip
+    test: ycbv_test_bop19.zip
+    pbr_train: ycbv_train_pbr.zip
+    obj_names: [002_master_chef_can, 003_cracker_box, 004_sugar_box, 005_tomato_soup_can, 006_mustard_bottle, 007_tuna_fish_can, 008_pudding_box, 009_gelatin_box, 010_potted_meat_can, 011_banana, 019_pitcher_base, 021_bleach_cleanser, 024_bowl, 025_mug, 035_power_drill, 036_wood_block, 037_scissors, 040_large_marker, 051_large_clamp, 052_extra_large_clamp, 061_foam_brick]
+  ruapc:
+    cad: ruapc_models.zip
+    test: ruapc_test_bop19.zip
+    obj_names: [001_red_copper_box, 002_red_cheezit_box, 003_crayon_box, 004_white_glue, 005_expo_box, 006_greenies, 007_straw_cup, 008_stick_box, 009_highland_sticker, 010_red_tennis_ball, 011_yellow_duck, 012_blue_oreo, 013_pen_box, 014_yellow_standley]
+  icbin:
+    cad: icbin_models.zip
+    test: icbin_test_bop19.zip
+    pbr_train: icbin_train_pbr.zip
+    obj_names: [001_blue_cup, 002_blue_box]
+  icmi:
+    cad: icmi_models.zip
+    test: icmi_test_bop19.zip
+    obj_names: [001_obj, 002_obj, 003_obj, 004_obj, 005_obj, 006_obj]
+  tudl:
+    cad: tudl_models.zip
+    test: tudl_test_bop19.zip
+    pbr_train: tudl_train_pbr.zip
+    obj_names: [001_dinosaur, 002_white_ape, 003_white_can]
+  tyol:
+    cad: tyol_models.zip
+    test: tyol_test_bop19.zip
+    obj_names: [001_obj, 002_obj, 003_obj, 004_obj, 005_obj, 006_obj, 007_obj, 008_obj, 009_obj, 010_obj, 011_obj, 012_obj, 013_obj, 014_obj, 015_obj, 016_obj, 017_obj, 018_obj, 019_obj, 020_obj, 021_obj]
