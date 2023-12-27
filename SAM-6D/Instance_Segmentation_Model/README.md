@@ -45,7 +45,7 @@ python download_dinov2.py
 
 ## Evaluation on BOP Datasets
 
-To evaluate the model on BOP datasets, please run the following command:
+To evaluate the model on BOP datasets, please run the following commands:
 
 ```
 # with sam
