@@ -161,17 +161,10 @@ class Dataset():
 
 
         # template
-        if dataset_type == 'GSO':
-            _, _, model_trans, model_scale = self._sample_model_points(dataset_type, obj_id)
-            # tem1_pts = tem1_pts + model_trans / model_scale * 0.1
-            # tem2_pts = tem2_pts + model_trans / model_scale * 0.1
-        else:
-            model_trans, model_scale = None, None
-        tem1_rgb, tem1_choose, tem1_pts = self._get_template(dataset_type, obj_id, 0, model_trans, model_scale)
-        tem2_rgb, tem2_choose, tem2_pts = self._get_template(dataset_type, obj_id, 1, model_trans, model_scale)
+        tem1_rgb, tem1_choose, tem1_pts = self._get_template(dataset_type, obj_id, 0)
+        tem2_rgb, tem2_choose, tem2_pts = self._get_template(dataset_type, obj_id, 1)
         if tem1_rgb is None:
             return None
-
 
 
         # mask
@@ -250,63 +243,7 @@ class Dataset():
         }
         return ret_dict
 
-
-    def _sample_model_points(self, type, obj_id):
-        if type == 'GSO':
-            info = self.model_info[0][obj_id]
-            assert info['obj_id'] == obj_id
-            model_file = os.path.join(
-                self.model_paths[0],
-                info['gso_id'],
-                'meshes',
-                'model.obj'
-            )
-            if not os.path.exists(model_file):
-                print(model_file)
-                return None, None
-
-            mesh = trimesh.load(model_file, force='mesh')
-            model_points, _, model_colors = trimesh.sample.sample_surface(mesh, self.n_sample_model_point, sample_color=True)
-            model_points = model_points.astype(np.float32)
-
-            min_value = np.min(model_points, axis=0)
-            max_value = np.max(model_points, axis=0)
-
-            xmin, ymin, zmin = list(min_value)
-            xmax, ymax, zmax = list(max_value)
-            scale = max(max(xmax - xmin, ymax - ymin), zmax - zmin) / 2.0
-            trans = np.array([-(xmax + xmin) / 2.0, -(ymax + ymin) / 2.0, -(zmax + zmin) / 2.0])
-
-            model_points = model_points + trans[None, :]
-            model_points /= scale
-            model_points *= 0.1
-
-        elif type == 'ShapeNetCore':
-            info = self.model_info[1][obj_id]
-            assert info['obj_id'] == obj_id
-            model_file = os.path.join(
-                self.model_paths[1],
-                info['shapenet_synset_id'],
-                info['shapenet_source_id'],
-                'models',
-                'model_normalized.obj'
-            )
-            try:
-                mesh = trimesh.load(model_file, force='mesh')
-                model_points, _, model_colors = trimesh.sample.sample_surface(mesh, self.n_sample_model_point, sample_color=True)
-            except:
-                print(os.path.getsize(model_file), model_file)
-                return None, None
-            model_points = model_points.astype(np.float32) * 0.1
-        else:
-            assert False
-
-        del mesh
-
-        return model_points, model_colors, trans, scale
-
-
-    def _get_template(self, type, obj_id, tem_index=1, model_trans=None, model_scale=None):
+    def _get_template(self, type, obj_id, tem_index=1):
         if type == 'GSO':
             info = self.model_info[0][obj_id]
             assert info['obj_id'] == obj_id
@@ -326,12 +263,12 @@ class Dataset():
 
         rgb_path = os.path.join(file_base, 'rgb_'+str(tem_index)+'.png')
         xyz_path = os.path.join(file_base, 'xyz_'+str(tem_index)+'.npy')
+        mask_path = os.path.join(file_base, 'mask_'+str(tem_index)+'.png')
         if not os.path.exists(rgb_path):
             return None, None, None
 
         # mask
-        mask = (xyz[:,:,0] == -0.001).astype(np.int) * (xyz[:,:,1] == -0.001).astype(np.int) * (xyz[:,:,2] == -0.001).astype(np.int)
-        mask = mask == 0
+        mask = load_im(mask_path).astype(np.int) == 255
         bbox = get_bbox(mask)
         y1,y2,x1,x2 = bbox
         mask = mask[y1:y2, x1:x2]
@@ -354,15 +291,8 @@ class Dataset():
         choose = choose[choose_idx]
 
         xyz = np.load(xyz_path).astype(np.float32)[y1:y2, x1:x2, :]
-        xyz = xyz.reshape((-1, 3))[choose, :]
+        xyz = xyz.reshape((-1, 3))[choose, :] * 0.1
         choose = get_resize_rgb_choose(choose, [y1, y2, x1, x2], self.img_size)
-
-        if type == 'GSO':
-            xyz = (xyz + model_trans[None, :]) / model_scale * 0.1
-        elif type == 'ShapeNetCore':
-            xyz = 2*(xyz - 0.5)
-        else:
-            assert False
 
         return rgb, choose, xyz
 
