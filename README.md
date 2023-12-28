@@ -17,6 +17,11 @@ In this work, we employ Segment Anything Model as an advanced starting point for
   <img width="50%" src="https://github.com/JiehongLin/SAM-6D/blob/main/pics/overview_sam_6d.png"/>
 </p>
 
+## TODO
+- [ ] Release a demo of SAM-6D.
+- [ ] Upload checkpoints of PEM.
+- [ ] Provide rendered templates of BOP objects.
+
 
 ## Citation
 If you find our work useful in your research, please consider citing:
