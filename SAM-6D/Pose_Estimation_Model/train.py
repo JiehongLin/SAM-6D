@@ -28,27 +28,26 @@ def get_parser():
     parser = argparse.ArgumentParser(
         description="Pose Estimation")
 
-    # pretrain
     parser.add_argument("--gpus",
                         type=str,
                         default="0",
-                        help="path to pretrain model")
+                        help="index of gpu")
     parser.add_argument("--model",
                         type=str,
                         default="pose_estimation_model",
-                        help="name of training model")
+                        help="name of model")
     parser.add_argument("--config",
                         type=str,
                         default="config/base.yaml",
-                        help="path to config file, different config.yaml use different config")
+                        help="path to config file")
     parser.add_argument("--exp_id",
                         type=int,
                         default=0,
-                        help="")
+                        help="experiment id")
     parser.add_argument("--checkpoint_iter",
                         type=int,
                         default=-1,
-                        help="")
+                        help="iter num. of checkpoint")
     args_cfg = parser.parse_args()
 
     return args_cfg
