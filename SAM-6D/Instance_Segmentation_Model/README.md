@@ -17,6 +17,9 @@ pip install git+https://github.com/facebookresearch/segment-anything.git
 
 # for using fastSAM
 pip install ultralytics==8.0.135
+
+# for using dinov2
+pip install git+https://github.com/facebookresearch/dinov2.git
 ```
 
 
