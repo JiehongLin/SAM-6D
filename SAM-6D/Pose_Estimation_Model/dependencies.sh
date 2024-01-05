@@ -9,6 +9,6 @@ pip install opencv-python
 pip install gpustat==1.0.0
 pip install einops
 
-cd /model/pointnet2
+cd ./model/pointnet2
 python setup.py install
 cd ..
