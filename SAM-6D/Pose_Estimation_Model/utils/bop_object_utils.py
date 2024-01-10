@@ -48,12 +48,11 @@ class Obj:
             for i in range(nView):
                 rgb_path = os.path.join(path, 'rgb_'+str(i)+'.png')
                 xyz_path = os.path.join(path, 'xyz_'+str(i)+'.npy')
+                mask_path = os.path.join(path, 'mask_'+str(i)+'.png')
 
                 rgb = load_im(rgb_path).astype(np.uint8)
                 xyz = np.load(xyz_path).astype(np.float32) / 1000.0  # * self.diameter # / 1000.0
-
-                mask = (xyz[:,:,0] == -0.001).astype(np.int) * (xyz[:,:,1] == -0.001).astype(np.int) * (xyz[:,:,2] == -0.001).astype(np.int)
-                mask = mask == 0
+                mask = load_im(mask_path).astype(int) == 255
 
                 self.template.append(rgb)
                 self.template_mask.append(mask)
