@@ -81,6 +81,29 @@ cd ../Render/
 blenderproc run render_shapenet_templates.py
 ```
 
+### Template Rendering of Test Objects
+We generate 42 templates for each test object following the [CNOS](https://github.com/nv-nguyen/cnos?tab=readme-ov-file) via [Blenderproc](https://github.com/DLR-RM/BlenderProc). 
+
+
+#### Custom Objects
+
+For a custom object, you can run the following commands to render the templates:
+```
+cd ../Render/
+blenderproc run render_custom_templates.py --cad_path $CAD_PATH --output_dir $OUTPUT_DIR
+```
+The string "CAD_PATH" is the path to your CAD and the string "OUTPUT_DIR" is the path to save templates.
+
+
+#### BOP Datasets
+You may run the following commands to render the tempates for the objects in BOP datasets:
+```
+cd ../Render/
+blenderproc run render_bop_templates.py --dataset_name $DATASET
+```
+The string "DATASET" could be set as `lmo`, `icbin`, `itodd`, `hb`, `tless`, `tudl` or `ycbv`. We also offer downloadable rendered templates [[link](https://drive.google.com/drive/folders/1fXt5Z6YDPZTJICZcywBUhu5rWnPvYAPI?usp=sharing)].
+
 
 ## Acknowledgements
 - [MegaPose](https://github.com/megapose6d/megapose6d)
+- [CNOS](https://github.com/nv-nguyen/cnos?tab=readme-ov-file)
