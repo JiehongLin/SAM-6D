@@ -6,9 +6,10 @@ import numpy as np
 import trimesh
 
 # set relative path of Data folder
-shapenet_path = '../Data/MegaPose-Training-Data/MegaPose-ShapeNetCore/shapenetcorev2'
+render_dir = os.path.dirname(os.path.abspath(__file__))
+shapenet_path = os.path.join(render_dir, '../Data/MegaPose-Training-Data/MegaPose-ShapeNetCore/shapenetcorev2')
 shapenet_orig_path = os.path.join(shapenet_path, 'models_orig')
-output_dir = '../Data/MegaPose-Training-Data/MegaPose-ShapeNetCore/templates'
+output_dir = os.path.join(render_dir, '../Data/MegaPose-Training-Data/MegaPose-ShapeNetCore/templates')
 
 bproc.init()
 

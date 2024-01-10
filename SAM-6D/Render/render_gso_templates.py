@@ -6,9 +6,10 @@ import numpy as np
 import trimesh
 
 # set relative path of Data folder
-gso_path = '../Data/MegaPose-Training-Data/MegaPose-GSO/google_scanned_objects'
+render_dir = os.path.dirname(os.path.abspath(__file__))
+gso_path = os.path.join(render_dir, '../Data/MegaPose-Training-Data/MegaPose-GSO/google_scanned_objects')
 gso_norm_path = os.path.join(gso_path, 'models_normalized')
-output_dir = '../Data/MegaPose-Training-Data/MegaPose-GSO/templates'
+output_dir = os.path.join(render_dir, '../Data/MegaPose-Training-Data/MegaPose-GSO/templates')
 
 bproc.init()
 
