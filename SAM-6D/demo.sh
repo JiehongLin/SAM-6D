@@ -1,6 +1,6 @@
 # Render CAD templates
 cd Render
-blenderproc run render_single_obj_templates.py --output_dir $OUTPUT_DIR --cad_path $CAD_PATH 
+blenderproc run render_custom_templates.py --output_dir $OUTPUT_DIR --cad_path $CAD_PATH 
 
 # Run instance segmentation model
 cd ../Instance_Segmentation_Model
