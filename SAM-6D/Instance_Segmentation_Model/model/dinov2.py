@@ -10,7 +10,6 @@ from torchvision.utils import make_grid, save_image
 from model.utils import BatchedData
 from copy import deepcopy
 import os.path as osp
-from dinov2.hub.backbones import _make_dinov2_model
 
 descriptor_size = {
     "dinov2_vits14": 384,
@@ -25,6 +24,69 @@ descriptor_map = {
     "dinov2_vitl14": "vit_large",
     "dinov2_vitg14": "vit_giant2",
 }
+
+from enum import Enum
+from typing import Union
+
+
+class Weights(Enum):
+    LVD142M = "LVD142M"
+
+_DINOV2_BASE_URL = "https://dl.fbaipublicfiles.com/dinov2"
+
+
+def _make_dinov2_model_name(arch_name: str, patch_size: int, num_register_tokens: int = 0) -> str:
+    compact_arch_name = arch_name.replace("_", "")[:4]
+    registers_suffix = f"_reg{num_register_tokens}" if num_register_tokens else ""
+    return f"dinov2_{compact_arch_name}{patch_size}{registers_suffix}"
+
+
+def _make_dinov2_model(
+    *,
+    arch_name: str = "vit_large",
+    img_size: int = 518,
+    patch_size: int = 14,
+    init_values: float = 1.0,
+    ffn_layer: str = "mlp",
+    block_chunks: int = 0,
+    num_register_tokens: int = 0,
+    interpolate_antialias: bool = False,
+    interpolate_offset: float = 0.1,
+    pretrained: bool = True,
+    weights: Union[Weights, str] = Weights.LVD142M,
+    **kwargs,
+):
+    from . import vision_transformer as vits
+
+    if isinstance(weights, str):
+        try:
+            weights = Weights[weights]
+        except KeyError:
+            raise AssertionError(f"Unsupported weights: {weights}")
+
+    model_base_name = _make_dinov2_model_name(arch_name, patch_size)
+    vit_kwargs = dict(
+        img_size=img_size,
+        patch_size=patch_size,
+        init_values=init_values,
+        ffn_layer=ffn_layer,
+        block_chunks=block_chunks,
+        num_register_tokens=num_register_tokens,
+        interpolate_antialias=interpolate_antialias,
+        interpolate_offset=interpolate_offset,
+    )
+    vit_kwargs.update(**kwargs)
+    model = vits.__dict__[arch_name](**vit_kwargs)
+
+    if pretrained:
+        model_full_name = _make_dinov2_model_name(arch_name, patch_size, num_register_tokens)
+        url = _DINOV2_BASE_URL + f"/{model_base_name}/{model_full_name}_pretrain.pth"
+        state_dict = torch.hub.load_state_dict_from_url(url, map_location="cpu")
+        model.load_state_dict(state_dict, strict=True)
+
+    return model
+
+
 
 
 class CustomDINOv2(pl.LightningModule):

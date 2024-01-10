@@ -167,8 +167,7 @@ class Instance_Segmentation_Model(pl.LightningModule):
         ):
             self.ref_data["pointcloud"] = torch.load(pointcloud_path, map_location="cuda:0").to(self.device)
         else:
-            mesh_path = osp.join(self.ref_dataset.root_dir, "models/models_eval")
-            # mesh_path = osp.join(self.ref_dataset.root_dir, "models_eval")
+            mesh_path = osp.join(self.ref_dataset.root_dir, "models")
             if not os.path.exists(mesh_path):
                 raise Exception("Can not find the mesh path.")
             for idx in tqdm(
