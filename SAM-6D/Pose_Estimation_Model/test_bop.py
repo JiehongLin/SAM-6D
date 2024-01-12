@@ -18,16 +18,16 @@ sys.path.append(os.path.join(BASE_DIR, 'provider'))
 sys.path.append(os.path.join(BASE_DIR, 'utils'))
 sys.path.append(os.path.join(BASE_DIR, 'model'))
 sys.path.append(os.path.join(BASE_DIR, 'model', 'pointnet2'))
-from model_utils import sample_pts_feats
+
 
 detetion_paths = {
-    'ycbv': 'segmentation_results/ycbv-test.json',
-    'tudl': 'segmentation_results/tudl-test.json',
-    'tless': 'segmentation_results/tless-test.json',
-    'lmo': 'segmentation_results/lmo-test.json',
-    'itodd': 'segmentation_results/itodd-test.json',
-    'icbin': 'segmentation_results/icbin-test.json',
-    'hb': 'segmentation_results/hb-test.json'
+    'ycbv': '../Instance_Segmentation_Model/log/sam/result_ycbv.json',
+    'tudl': '../Instance_Segmentation_Model/log/sam/result_tudl.json',
+    'tless': '../Instance_Segmentation_Model/log/sam/result_tless.json',
+    'lmo': '../Instance_Segmentation_Model/log/sam/result_lmo.json',
+    'itodd': '../Instance_Segmentation_Model/log/sam/result_itodd.json',
+    'icbin': '../Instance_Segmentation_Model/log/sam/result_icbin.json',
+    'hb': '../Instance_Segmentation_Model/log/sam/result_hb.json'
 }
 
 
@@ -59,6 +59,10 @@ def get_parser():
                         type=int,
                         default=0,
                         help="iter num. for testing")
+    parser.add_argument("--view",
+                        type=int,
+                        default=-1,
+                        help="view number of templates")
     parser.add_argument("--exp_id",
                         type=int,
                         default=0,
@@ -83,6 +87,9 @@ def init():
     cfg.checkpoint_path = args.checkpoint_path
     cfg.test_iter = args.iter
     cfg.dataset = args.dataset
+
+    if args.view != -1:
+        cfg.test_dataset.n_template_view = args.view
 
     gorilla.utils.set_cuda_visible_devices(gpu_ids = cfg.gpus)
     return cfg
