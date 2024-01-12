@@ -34,9 +34,9 @@ sh prepare.sh
 ### 2. Evaluate on the custom data
 ```
 # set the paths
-export CAD_PATH=Data/Example/obj_000005.ply    # path to a given cad model
+export CAD_PATH=Data/Example/obj_000005.ply    # path to a given cad model(mm)
 export RGB_PATH=Data/Example/rgb.png           # path to a given RGB image
-export DEPTH_PATH=Data/Example/depth.png       # path to a given depth map
+export DEPTH_PATH=Data/Example/depth.png       # path to a given depth map(mm)
 export CAMERA_PATH=Data/Example/camera.json    # path to given camera intrinsics
 export OUTPUT_DIR=Data/Example/outputs         # path to a pre-defined file for saving results
 
