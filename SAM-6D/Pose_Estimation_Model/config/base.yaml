@@ -88,7 +88,7 @@ test_dataset:
   minimum_n_point: 8
   rgb_mask_flag: True
   seg_filter_score: 0.25
-  n_template_view: 8
+  n_template_view: 42
 
 
 test_dataloader:
