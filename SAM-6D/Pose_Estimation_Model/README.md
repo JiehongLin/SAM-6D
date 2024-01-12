@@ -6,8 +6,8 @@
 
 ## Requirements
 The code has been tested with
-- python 3.7.6
-- pytorch 1.9.0
+- python 3.9.6
+- pytorch 2.0.0
 - CUDA 11.3
 
 Other dependencies:
