@@ -21,6 +21,13 @@ sh dependencies.sh
 Please refer to [[link](https://github.com/JiehongLin/SAM-6D/tree/main/SAM-6D/Data)] for more details.
 
 
+## Model Download
+Our trained model is provided [[here](https://drive.google.com/file/d/1OxUBSiFBD2MozUW6fvZkGpIGm5j3cXE8/view?usp=drive_link)], and could be downloaded via the command:
+```
+python download-sam-6d-pem.py
+```
+
+
 ## Training on MegaPose Training Set
 
 To train the Pose Estimation Model of SAM-6D, please prepare the training data and run the folowing command:
@@ -34,11 +41,13 @@ By default, we use two GPUs of 3090ti to train the model.
 
 To evaluate the model on BOP datasets, please run the following command:
 ```
-python test_bop.py --gpus 0 --model pose_estimation_model --config config/base.yaml --iter 600000 --dataset $DATASET
+python test_bop.py --gpus 0 --model pose_estimation_model --config config/base.yaml --dataset $DATASET --view 42
 ```
-or 
+Before evaluation, please refer to [[link](https://github.com/JiehongLin/SAM-6D/tree/main/SAM-6D/Data)] for rendering the object templates of BOP datasets, or download our [rendered templates](https://drive.google.com/drive/folders/1fXt5Z6YDPZTJICZcywBUhu5rWnPvYAPI?usp=drive_link). Besides, the instance segmentation should be done following [[link](https://github.com/JiehongLin/SAM-6D/tree/main/SAM-6D/Instance_Segmentation_Model)]; to test on your own segmentation results, you could change the "detection_paths" in the `test_bop.py` file.
+
+One could also download our trained model for evaluation:
 ```
-python test_bop.py --gpus 0 --model pose_estimation_model --config config/base.yaml --checkpoint_path $CHECK_POINT --dataset $DATASET
+python test_bop.py --gpus 0 --model pose_estimation_model --config config/base.yaml --checkpoint_path checkpoints/sam-6d-pem-base.pth --dataset $DATASET --view 42
 ```
 The string "DATASET" could be set as `lmo`, `icbin`, `itodd`, `hb`, `tless`, `tudl`, `ycbv`, or `all`.
 
