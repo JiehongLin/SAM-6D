@@ -24,7 +24,7 @@ Please refer to [[link](https://github.com/JiehongLin/SAM-6D/tree/main/SAM-6D/Da
 ## Model Download
 Our trained model is provided [[here](https://drive.google.com/file/d/1OxUBSiFBD2MozUW6fvZkGpIGm5j3cXE8/view?usp=drive_link)], and could be downloaded via the command:
 ```
-python download-sam-6d-pem.py
+python download_sam6d-pem.py
 ```
 
 

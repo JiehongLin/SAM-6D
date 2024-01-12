@@ -1,0 +1,39 @@
+name: sam6d
+channels:
+  - xformers
+  - conda-forge
+  - pytorch
+  - nvidia
+  - defaults
+dependencies:
+  - pip
+  - python=3.9.6
+  - pip:
+    - torch==2.0.0
+    - torchvision==0.15.1
+    - fvcore
+    - xformers==0.0.18
+    - torchmetrics==0.10.3
+    - blenderproc
+    - opencv-python 
+    # ISM 
+    - omegaconf
+    - ruamel.yaml
+    - hydra-colorlog
+    - hydra-core
+    - gdown
+    - pandas
+    - imageio
+    - pyrender
+    - pytorch-lightning==1.8.1
+    - pycocotools 
+    - distinctipy
+    - git+https://github.com/facebookresearch/segment-anything.git  # SAM
+    - ultralytics==8.0.135  # FastSAM
+    # PEM
+    - timm
+    - gorilla-core==0.2.7.8
+    - trimesh==4.0.8
+    - gpustat==1.0.0
+    - imgaug
+    - einops
