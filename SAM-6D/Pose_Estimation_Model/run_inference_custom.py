@@ -268,7 +268,7 @@ if __name__ == "__main__":
     model = MODEL.Net(cfg.model)
     model = model.cuda()
     model.eval()
-    checkpoint = os.path.join(cfg.log_dir, 'checkpoint_iter' + str(cfg.test_iter).zfill(6) + '.pth')
+    checkpoint = os.path.join(os.path.dirname((os.path.abspath(__file__))), 'checkpoints', 'sam-6d-pem-base.pth')
     gorilla.solver.load_checkpoint(model=model, filename=checkpoint)
 
     print("=> extracting templates ...")
