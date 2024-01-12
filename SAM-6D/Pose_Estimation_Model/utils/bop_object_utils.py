@@ -41,18 +41,21 @@ class Obj:
 
     def _get_template(self, path, nView):
         if nView > 0:
+            total_nView = len(glob.glob(os.path.join(path, 'rgb_*.png')))
+
             self.template = []
             self.template_mask = []
             self.template_pts = []
 
-            for i in range(nView):
+            for v in range(nView):
+                i = int(total_nView / nView * v)
                 rgb_path = os.path.join(path, 'rgb_'+str(i)+'.png')
                 xyz_path = os.path.join(path, 'xyz_'+str(i)+'.npy')
                 mask_path = os.path.join(path, 'mask_'+str(i)+'.png')
 
                 rgb = load_im(rgb_path).astype(np.uint8)
-                xyz = np.load(xyz_path).astype(np.float32) / 1000.0  # * self.diameter # / 1000.0
-                mask = load_im(mask_path).astype(int) == 255
+                xyz = np.load(xyz_path).astype(np.float32) / 1000.0 
+                mask = load_im(mask_path).astype(np.int) == 255
 
                 self.template.append(rgb)
                 self.template_mask.append(mask)
