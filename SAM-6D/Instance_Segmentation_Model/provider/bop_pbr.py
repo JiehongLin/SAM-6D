@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 import os.path as osp
 import pandas as pd
 from utils.inout import load_json, save_json, casting_format_to_save_json
-from provider.poses.utils import (
+from utils.poses.pose_utils import (
     load_index_level_in_level2,
     get_obj_poses_from_template_level,
     NearestTemplateFinder,

@@ -10,7 +10,7 @@ from torch.utils.data import Dataset
 import os.path as osp
 import pandas as pd
 from utils.inout import load_json, save_json, casting_format_to_save_json
-from provider.poses.utils import load_index_level_in_level2
+from utils.poses.pose_utils import load_index_level_in_level2
 import torch
 from utils.bbox_utils import CropResizePad
 import pytorch_lightning as pl

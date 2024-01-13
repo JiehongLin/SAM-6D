@@ -1,6 +1,6 @@
 from torch import nn
 import torch
-from provider.poses.utils import load_rotation_transform, convert_openCV_to_openGL_torch
+from utils.poses.pose_utils import load_rotation_transform, convert_openCV_to_openGL_torch
 import torch.nn.functional as F
 from model.utils import BatchedData
 

@@ -7,7 +7,7 @@ import torch
 from torch import nn
 import math
 from scipy.spatial.distance import cdist
-from provider.poses.fps import FPS
+from utils.poses.fps import FPS
 
 def opencv2opengl(cam_matrix_world):
     transform = np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
@@ -73,12 +73,12 @@ def get_obj_poses_from_template_level(
     root_project = get_root_project()
     if return_cam:
         obj_poses_path = os.path.join(
-            root_project, f"provider/poses/predefined_poses/cam_poses_level{level}.npy"
+            root_project, f"utils/poses/predefined_poses/cam_poses_level{level}.npy"
         )
         obj_poses = np.load(obj_poses_path)
     else:
         obj_poses_path = os.path.join(
-            root_project, f"provider/poses/predefined_poses/obj_poses_level{level}.npy"
+            root_project, f"utils/poses/predefined_poses/obj_poses_level{level}.npy"
         )
         obj_poses = np.load(obj_poses_path)
 
@@ -90,7 +90,7 @@ def get_obj_poses_from_template_level(
             return obj_poses
     elif pose_distribution == "upper":
         cam_poses_path = os.path.join(
-            root_project, f"provider/poses/predefined_poses/cam_poses_level{level}.npy"
+            root_project, f"utils/poses/predefined_poses/cam_poses_level{level}.npy"
         )
         cam_poses = np.load(cam_poses_path)
         if return_index:
@@ -105,7 +105,7 @@ def load_index_level_in_level2(level, pose_distribution):
     root_repo = get_root_project()
     index_path = os.path.join(
         root_repo,
-        f"provider/poses/predefined_poses/idx_{pose_distribution}_level{level}_in_level2.npy",
+        f"utils/poses/predefined_poses/idx_{pose_distribution}_level{level}_in_level2.npy",
     )
     return np.load(index_path)
 

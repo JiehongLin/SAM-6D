@@ -8,7 +8,7 @@ from pathlib import Path
 from PIL import Image
 from torch.utils.data import Dataset
 import os.path as osp
-from provider.poses.utils import load_index_level_in_level2
+from utils.poses.pose_utils import load_index_level_in_level2
 import torch
 from utils.bbox_utils import CropResizePad
 import pytorch_lightning as pl

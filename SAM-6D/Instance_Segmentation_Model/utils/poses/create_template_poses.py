@@ -4,6 +4,7 @@ import bpy
 import bmesh
 import math
 import numpy as np
+import os
 
 
 def get_camera_positions(nSubDiv):
@@ -123,7 +124,9 @@ def inverse_transform(poses):
     return new_poses
 
 
-save_dir = "provider/poses/predefined_poses"
+save_dir = "utils/poses/predefined_poses"
+if not os.path.exists(save_dir):
+    os.makedirs(save_dir)
 
 for level in [0, 1, 2]:
     position_icosphere = np.asarray(get_camera_positions(level)[1])

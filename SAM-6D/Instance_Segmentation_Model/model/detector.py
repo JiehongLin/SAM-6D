@@ -18,7 +18,7 @@ import multiprocessing
 import trimesh
 from model.loss import MaskedPatch_MatrixSimilarity
 from utils.trimesh_utils import depth_image_to_pointcloud_translate_torch
-from provider.poses.utils import get_obj_poses_from_template_level
+from utils.poses.pose_utils import get_obj_poses_from_template_level
 from utils.bbox_utils import xyxy_to_xywh, compute_iou
 
 

@@ -70,7 +70,7 @@ def run_inference(cfg: DictConfig):
     agg_function = cfg.model.matching_config.aggregation_function
     rendering_type = cfg.model.onboarding_config.rendering_type
     level_template = cfg.model.onboarding_config.level_templates
-    model.name_prediction_file = f"{segmentation_name}_template_{rendering_type}{level_template}_agg{agg_function}_{cfg.dataset_name}"
+    model.name_prediction_file = f"result_{cfg.dataset_name}"
     logging.info(f"Loading dataloader for {cfg.dataset_name} done!")
     trainer.test(
         model,

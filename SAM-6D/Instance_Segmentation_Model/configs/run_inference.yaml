@@ -5,7 +5,14 @@ defaults:
   - data: bop
   - model: ISM_sam
   - _self_
+  - override hydra/hydra_logging: disabled  
+  - override hydra/job_logging: disabled  
+
+hydra:
+  output_subdir: null
+  run:
+   dir: .
 
 save_dir: ./logs/${name_exp}
-name_exp: ISM_exps
+name_exp: sam
 dataset_name:
