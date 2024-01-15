@@ -268,7 +268,7 @@ class Dataset():
             return None, None, None
 
         # mask
-        mask = load_im(mask_path).astype(int) == 255
+        mask = load_im(mask_path).astype(np.uint8) == 255
         bbox = get_bbox(mask)
         y1,y2,x1,x2 = bbox
         mask = mask[y1:y2, x1:x2]

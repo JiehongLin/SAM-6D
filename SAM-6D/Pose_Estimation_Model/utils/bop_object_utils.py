@@ -55,7 +55,7 @@ class Obj:
 
                 rgb = load_im(rgb_path).astype(np.uint8)
                 xyz = np.load(xyz_path).astype(np.float32) / 1000.0 
-                mask = load_im(mask_path).astype(np.int) == 255
+                mask = load_im(mask_path).astype(np.uint8) == 255
 
                 self.template.append(rgb)
                 self.template_mask.append(mask)
