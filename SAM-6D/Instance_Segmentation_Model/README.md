@@ -11,15 +11,13 @@ Create conda environment:
 
 ```
 conda env create -f environment.yml
+conda activate sam6d-ism
 
 # for using SAM
 pip install git+https://github.com/facebookresearch/segment-anything.git
 
 # for using fastSAM
 pip install ultralytics==8.0.135
-
-# for using dinov2
-pip install git+https://github.com/facebookresearch/dinov2.git
 ```
 
 
@@ -51,6 +49,9 @@ python download_dinov2.py
 To evaluate the model on BOP datasets, please run the following commands:
 
 ```
+# Specify a specific GPU
+export CUDA_VISIBLE_DEVICES=0
+
 # with sam
 python run_inference.py dataset_name=$DATASET
 

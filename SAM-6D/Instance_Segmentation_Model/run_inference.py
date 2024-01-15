@@ -11,7 +11,6 @@ def run_inference(cfg: DictConfig):
     OmegaConf.set_struct(cfg, False)
     hydra_cfg = hydra.core.hydra_config.HydraConfig.get()
     output_path = hydra_cfg["runtime"]["output_dir"]
-    os.makedirs(cfg.callback.checkpoint.dirpath, exist_ok=True)
     logging.info(
         f"Training script. The outputs of hydra will be stored in: {output_path}"
     )

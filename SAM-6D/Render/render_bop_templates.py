@@ -14,7 +14,7 @@ args = parser.parse_args()
 render_dir = os.path.dirname(os.path.abspath(__file__))
 bop_path = os.path.join(render_dir, '../Data/BOP')
 output_dir = os.path.join(render_dir, '../Data/BOP-Templates')
-cnos_cam_fpath = os.path.join(render_dir, '../Instance_Segmentation_Model/provider/poses/predefined_poses/cam_poses_level0.npy')
+cnos_cam_fpath = os.path.join(render_dir, '../Instance_Segmentation_Model/utils/poses/predefined_poses/cam_poses_level0.npy')
 
 bproc.init()
 

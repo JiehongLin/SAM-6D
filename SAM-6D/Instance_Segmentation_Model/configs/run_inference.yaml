@@ -13,6 +13,6 @@ hydra:
   run:
    dir: .
 
-save_dir: ./logs/${name_exp}
+save_dir: ./log/${name_exp}
 name_exp: sam
 dataset_name:

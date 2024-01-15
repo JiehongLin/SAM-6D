@@ -1,4 +1,4 @@
-name: sam6d
+name: sam6d-ism
 channels:
   - xformers
   - pytorch

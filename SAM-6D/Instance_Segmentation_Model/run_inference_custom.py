@@ -27,7 +27,7 @@ from skimage.feature import canny
 from skimage.morphology import binary_dilation
 from segment_anything.utils.amg import rle_to_mask
 
-from provider.poses.utils import get_obj_poses_from_template_level, load_index_level_in_level2
+from utils.poses.pose_utils import get_obj_poses_from_template_level, load_index_level_in_level2
 from utils.bbox_utils import CropResizePad
 from model.utils import Detections, convert_npz_to_json
 from model.loss import Similarity
