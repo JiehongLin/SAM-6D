@@ -18,9 +18,9 @@ class Solver(gorilla.solver.BaseSolver):
             model=model,
             dataloaders=dataloaders,
             cfg=cfg,
-            logger=logger,
         )
         self.loss = loss
+        self.logger = logger
         self.logger.propagate = 0
 
         self.coarse_model = coarse_model.eval() if coarse_model is not None else coarse_model
