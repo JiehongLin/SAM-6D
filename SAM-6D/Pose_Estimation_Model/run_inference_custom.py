@@ -191,7 +191,7 @@ def get_test_data(rgb_path, depth_path, cam_path, cad_path, seg_path, det_score_
     all_cloud = []
     all_rgb_choose = []
     all_score = []
-
+    all_dets = []
     for inst in dets:
         seg = inst['segmentation']
         score = inst['score']
@@ -241,7 +241,7 @@ def get_test_data(rgb_path, depth_path, cam_path, cad_path, seg_path, det_score_
         all_cloud.append(torch.FloatTensor(cloud))
         all_rgb_choose.append(torch.IntTensor(rgb_choose).long())
         all_score.append(score)
-
+        all_dets.append(inst)
 
     ret_dict = {}
     ret_dict['pts'] = torch.stack(all_cloud).cuda()
@@ -252,7 +252,7 @@ def get_test_data(rgb_path, depth_path, cam_path, cad_path, seg_path, det_score_
     ninstance = ret_dict['pts'].size(0)
     ret_dict['model'] = torch.FloatTensor(model_points).unsqueeze(0).repeat(ninstance, 1, 1).cuda()
     ret_dict['K'] = torch.FloatTensor(K).unsqueeze(0).repeat(ninstance, 1, 1).cuda()
-    return ret_dict, whole_image, whole_pts.reshape(-1, 3), model_points, dets
+    return ret_dict, whole_image, whole_pts.reshape(-1, 3), model_points, all_dets
 
 
 
@@ -290,8 +290,8 @@ if __name__ == "__main__":
         input_data['dense_fo'] = all_tem_feat.repeat(ninstance,1,1)
         out = model(input_data)
 
-    if 'pose_score' in out.keys():
-        pose_scores = out['pose_score'] * out['score']
+    if 'pred_pose_score' in out.keys():
+        pose_scores = out['pred_pose_score'] * out['score']
     else:
         pose_scores = out['score']
     pose_scores = pose_scores.detach().cpu().numpy()
