@@ -101,8 +101,8 @@ rgb_transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                                     std=[0.229, 0.224, 0.225])])
 
-def visualize(rgb, pred_rot, pred_trans, scale, K, save_path):
-    img = draw_detections(rgb, pred_rot, pred_trans, scale, K, color=(255, 0, 0))
+def visualize(rgb, pred_rot, pred_trans, model_points, K, save_path):
+    img = draw_detections(rgb, pred_rot, pred_trans, model_points, K, color=(255, 0, 0))
     img = Image.fromarray(np.uint8(img))
     img.save(save_path)
     prediction = Image.open(save_path)
@@ -312,7 +312,6 @@ if __name__ == "__main__":
     save_path = os.path.join(f"{cfg.output_dir}/sam6d_results", 'vis_pem.png')
     valid_masks = pose_scores>cfg.vis_score_thresh
     K = input_data['K'].detach().cpu().numpy()[valid_masks]
-    scale = np.max(np.abs(model_points), axis=0)*2 * 1000
-    vis_img = visualize(img, pred_rot[valid_masks], pred_trans[valid_masks], scale, K, save_path)
+    vis_img = visualize(img, pred_rot[valid_masks], pred_trans[valid_masks], model_points*1000, K, save_path)
     vis_img.save(save_path)
 
