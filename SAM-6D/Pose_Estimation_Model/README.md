@@ -22,19 +22,18 @@ Please refer to [[link](https://github.com/JiehongLin/SAM-6D/tree/main/SAM-6D/Da
 
 
 ## Model Download
-Our trained model is provided [[here](https://drive.google.com/file/d/1OxUBSiFBD2MozUW6fvZkGpIGm5j3cXE8/view?usp=drive_link)], and could be downloaded via the command:
+Our trained model is provided [[here](https://drive.google.com/file/d/1joW9IvwsaRJYxoUmGo68dBVg-HcFNyI7/view?usp=sharing)], and could be downloaded via the command:
 ```
 python download_sam6d-pem.py
 ```
-
 
 ## Training on MegaPose Training Set
 
 To train the Pose Estimation Model of SAM-6D, please prepare the training data and run the folowing command:
 ```
-python train.py --gpus 0,1 --model pose_estimation_model --config config/base.yaml
+python train.py --gpus 0,1,2,3 --model pose_estimation_model --config config/base.yaml
 ```
-By default, we use two GPUs of 3090ti to train the model.
+By default, we use four GPUs of 3090ti to train the model with batchsize set as 28.
 
 
 ## Evaluation on BOP Datasets
