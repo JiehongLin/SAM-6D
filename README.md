@@ -10,8 +10,11 @@
 
 
 ## News
-- [2024/03] Our paper is accepted by CVPR2024!
+- [2024/02/29] Our paper is accepted by CVPR2024!
 
+
+## Update Log
+- [2024/03/01] We update the released [model](https://drive.google.com/file/d/1joW9IvwsaRJYxoUmGo68dBVg-HcFNyI7/view?usp=sharing) of PEM. For the new model, a larger batchsize of 32 is set, while that of the old is 12. 
 
 
 ## Overview
