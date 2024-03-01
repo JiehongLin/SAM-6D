@@ -69,7 +69,7 @@ train_dataset:
   dilate_mask: True
 
 train_dataloader:
-  bs            : 12
+  bs            : 28
   num_workers   : 24
   shuffle       : True
   drop_last     : True
