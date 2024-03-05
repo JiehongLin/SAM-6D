@@ -42,29 +42,32 @@ inv_rgb_transform = T.Compose(
         ]
     )
 
-def visualize(rgb, detections, vis_score_thresh, save_path="tmp.png"):
+def visualize(rgb, detections, save_path="tmp.png"):
     img = rgb.copy()
     gray = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
     img = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     colors = distinctipy.get_colors(len(detections))
     alpha = 0.33
 
+    best_score = 0.
     for mask_idx, det in enumerate(detections):
-        if det['score'] < vis_score_thresh:
-            continue
-        mask = rle_to_mask(det["segmentation"])
-        edge = canny(mask)
-        edge = binary_dilation(edge, np.ones((2, 2)))
-        obj_id = det["category_id"]
-        temp_id = obj_id - 1
+        if best_score < det['score']:
+            best_score = det['score']
+            best_det = detections[mask_idx]
 
-        r = int(255*colors[temp_id][0])
-        g = int(255*colors[temp_id][1])
-        b = int(255*colors[temp_id][2])
-        img[mask, 0] = alpha*r + (1 - alpha)*img[mask, 0]
-        img[mask, 1] = alpha*g + (1 - alpha)*img[mask, 1]
-        img[mask, 2] = alpha*b + (1 - alpha)*img[mask, 2]   
-        img[edge, :] = 255
+    mask = rle_to_mask(best_det["segmentation"])
+    edge = canny(mask)
+    edge = binary_dilation(edge, np.ones((2, 2)))
+    obj_id = best_det["category_id"]
+    temp_id = obj_id - 1
+
+    r = int(255*colors[temp_id][0])
+    g = int(255*colors[temp_id][1])
+    b = int(255*colors[temp_id][2])
+    img[mask, 0] = alpha*r + (1 - alpha)*img[mask, 0]
+    img[mask, 1] = alpha*g + (1 - alpha)*img[mask, 1]
+    img[mask, 2] = alpha*b + (1 - alpha)*img[mask, 2]   
+    img[edge, :] = 255
     
     img = Image.fromarray(np.uint8(img))
     img.save(save_path)
@@ -89,11 +92,20 @@ def batch_input_data(depth_path, cam_path, device):
     batch['depth_scale'] = torch.from_numpy(depth_scale).unsqueeze(0).to(device)
     return batch
 
-def run_inference(output_dir, cad_path, rgb_path, depth_path, cam_path, stability_score_thresh, vis_score_thresh):
+def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, cam_path, stability_score_thresh):
     with initialize(version_base=None, config_path="configs"):
         cfg = compose(config_name='run_inference.yaml')
-    cfg.model.segmentor_model.stability_score_thresh = stability_score_thresh
-    metric = Similarity()
+
+    if segmentor_model == "sam":
+        with initialize(version_base=None, config_path="configs/model"):
+            cfg.model = compose(config_name='ISM_sam.yaml')
+        cfg.model.segmentor_model.stability_score_thresh = stability_score_thresh
+    elif segmentor_model == "fastsam":
+        with initialize(version_base=None, config_path="configs/model"):
+            cfg.model = compose(config_name='ISM_fastsam.yaml')
+    else:
+        raise ValueError("The segmentor_model {} is not supported now!".format(segmentor_model))
+
     logging.info("Initializing model")
     model = instantiate(cfg.model)
     
@@ -188,28 +200,28 @@ def run_inference(output_dir, cad_path, rgb_path, depth_path, cam_path, stabilit
     final_score = (semantic_score + appe_scores + geometric_score*visible_ratio) / (1 + 1 + visible_ratio)
 
     detections.add_attribute("scores", final_score)
-    detections.add_attribute("object_ids", torch.zeros_like(final_score))
-        
+    detections.add_attribute("object_ids", torch.zeros_like(final_score))   
+         
     detections.to_numpy()
     save_path = f"{output_dir}/sam6d_results/detection_ism"
     detections.save_to_file(0, 0, 0, save_path, "Custom", return_results=False)
     detections = convert_npz_to_json(idx=0, list_npz_paths=[save_path+".npz"])
     save_json_bop23(save_path+".json", detections)
-    vis_img = visualize(rgb, detections, vis_score_thresh, f"{output_dir}/sam6d_results/vis_ism.png")
+    vis_img = visualize(rgb, detections, f"{output_dir}/sam6d_results/vis_ism.png")
     vis_img.save(f"{output_dir}/sam6d_results/vis_ism.png")
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--segmentor_model", default='sam', help="The segmentor model in ISM")
     parser.add_argument("--output_dir", nargs="?", help="Path to root directory of the output")
     parser.add_argument("--cad_path", nargs="?", help="Path to CAD(mm)")
     parser.add_argument("--rgb_path", nargs="?", help="Path to RGB image")
     parser.add_argument("--depth_path", nargs="?", help="Path to Depth image(mm)")
     parser.add_argument("--cam_path", nargs="?", help="Path to camera information")
     parser.add_argument("--stability_score_thresh", default=0.97, type=float, help="stability_score_thresh of SAM")
-    parser.add_argument("--vis_score_thresh", default=0.4, help="The score threshold of visualization")
     args = parser.parse_args()
     os.makedirs(f"{args.output_dir}/sam6d_results", exist_ok=True)
     run_inference(
-        args.output_dir, args.cad_path, args.rgb_path, args.depth_path, args.cam_path, 
-        stability_score_thresh=args.stability_score_thresh, vis_score_thresh=args.vis_score_thresh
+        args.segmentor_model, args.output_dir, args.cad_path, args.rgb_path, args.depth_path, args.cam_path, 
+        stability_score_thresh=args.stability_score_thresh,
     )

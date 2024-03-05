@@ -14,7 +14,7 @@ dependencies:
     - fvcore
     - xformers==0.0.18
     - torchmetrics==0.10.3
-    - blenderproc
+    - blenderproc==2.6.1
     - opencv-python 
     # ISM 
     - omegaconf
