@@ -10,6 +10,7 @@
 
 
 ## News
+- [2024/03/07] We publish an updated version of our paper on [ArXiv](https://arxiv.org/abs/2311.15707).
 - [2024/02/29] Our paper is accepted by CVPR2024!
 
 
@@ -41,6 +42,7 @@ Install the environment and download the model checkpoints:
 cd SAM-6D
 sh prepare.sh
 ```
+We also provide a [docker image](https://hub.docker.com/r/lihualiu/sam-6d/tags) for convenience.
 
 ### 2. Evaluation on the custom data
 ```
