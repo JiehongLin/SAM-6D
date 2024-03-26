@@ -8,14 +8,16 @@ channels:
 dependencies:
   - pip
   - python=3.9.6
+  - cuda=12.0
+  - libxcrypt
   - pip:
-    - torch==2.0.0
-    - torchvision==0.15.1
+    - torch==2.2.1
+    - torchvision
     - fvcore
-    - xformers==0.0.18
-    - torchmetrics==0.10.3
-    - blenderproc==2.6.1
-    - opencv-python 
+    - xformers
+    - torchmetrics
+    - blenderproc==2.7.0
+    - opencv-python
     # ISM 
     - omegaconf
     - ruamel.yaml

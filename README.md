@@ -32,33 +32,72 @@ In this work, we employ Segment Anything Model as an advanced starting point for
 
 ## Getting Started
 
+### 0. Prerequisites
+- **Linux** (tested on Ubuntu 20.04 and 22.04)
+- **NVIDIA drivers** (tested with 525 and 535)
+- **CUDA** (tested with 12.0 and 12.2)
+- **Anaconda** (see below for Installation)
+- If running on **non-local machines**, i.e. cloud servers or VMs, ensure that x11 is available: `sudo apt install xorg`
+
+<details>
+<summary>Optional: Installation of Anaconda</summary>
+
+Run the code below, to install the latest version of Miniconda, or refer to the [Anaconda documentation](https://docs.anaconda.com/) to install Anaconda.
+
+```bash
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh &&
+chmod +x ~/miniconda.sh &&
+bash ~/miniconda.sh -b -p ~/miniconda &&
+rm ~/miniconda.sh &&
+source ~/miniconda/bin/activate &&
+conda init --all &&
+source ~/.bashrc
+```
+</details>
+
+
 ### 1. Preparation
 Please clone the repository locally:
-```
+```shell
 git clone https://github.com/JiehongLin/SAM-6D.git
+cd SAM-6D/SAM-6D
 ```
-Install the environment and download the model checkpoints:
+Install the environment:
+```shell
+conda env create -f environment.yaml
+conda activate sam6d
 ```
-cd SAM-6D
+Download the model checkpoints:
+```shell
 sh prepare.sh
 ```
+
 We also provide a [docker image](https://hub.docker.com/r/lihualiu/sam-6d/tags) for convenience.
 
-### 2. Evaluation on the custom data
-```
-# set the paths
-export CAD_PATH=Data/Example/obj_000005.ply    # path to a given cad model(mm)
-export RGB_PATH=Data/Example/rgb.png           # path to a given RGB image
-export DEPTH_PATH=Data/Example/depth.png       # path to a given depth map(mm)
-export CAMERA_PATH=Data/Example/camera.json    # path to given camera intrinsics
-export OUTPUT_DIR=Data/Example/outputs         # path to a pre-defined file for saving results
+### 2. Run Inference on the example or custom data
+To run inference the following **environment variables** must be set:
 
-# run inference
-cd SAM-6D
+- `$CAD_PATH` path to a given cad model(mm)
+- `$RGB_PATH` path to a given RGB image
+- `$DEPTH_PATH` path to a given depth map(mm)
+- `$CAMERA_PATH` path to given camera intrinsics
+- `$OUTPUT_DIR` path to a pre-defined file for saving results
+
+
+Run inference on the [**example data**](https://github.com/JiehongLin/SAM-6D/tree/main/SAM-6D/Data/Example):
+```shell
+# export example variables, must be executed from SAM-6D/SAM-6D directory containg the Data folder
+export CAD_PATH=$PWD/Data/Example/obj_000005.ply
+export RGB_PATH=$PWD/Data/Example/rgb.png
+export DEPTH_PATH=$PWD/Data/Example/depth.png
+export CAMERA_PATH=$PWD/Data/Example/camera.json
+export OUTPUT_DIR=$PWD/Data/Example/outputs
+
 sh demo.sh
 ```
+All output will be saved unter the `$OUTPUT_DIR`.
 
-
+To run inference on **custom data**, export the environment pointing to your data and then run `sh demo.sh`.
 
 ## Citation
 If you find our work useful in your research, please consider citing:
