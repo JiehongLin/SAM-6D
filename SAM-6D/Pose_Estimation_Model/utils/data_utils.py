@@ -117,9 +117,9 @@ def get_resize_rgb_choose(choose, bbox, img_size):
     crop_w = cmax - cmin
     ratio_w = img_size / crop_w
 
-    row_idx = choose // crop_h
-    col_idx = choose % crop_h
-    choose = (np.floor(row_idx * ratio_w) * img_size + np.floor(col_idx * ratio_h)).astype(np.int64)
+    row_idx = choose // crop_w
+    col_idx = choose % crop_w
+    choose = (np.floor(row_idx * ratio_h) * img_size + np.floor(col_idx * ratio_w)).astype(np.int64)
     return choose
 
 
