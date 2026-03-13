@@ -14,7 +14,7 @@ post_processing_config:
   mask_post_processing:
     min_box_size: 0.05 # relative to image size 
     min_mask_size: 3e-4 # relative to image size
-  nms_thresh: 0.25
+  nms_thresh: 0.5
 
 matching_config: 
   metric:
@@ -22,7 +22,7 @@ matching_config:
     metric: cosine
     chunk_size: 16
   aggregation_function: avg_5
-  confidence_thresh: 0.2
+  confidence_thresh: 0.3
 
 onboarding_config:
   rendering_type: pbr

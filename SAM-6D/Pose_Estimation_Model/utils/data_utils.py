@@ -12,6 +12,12 @@ def load_im(path):
     :param path: Path to the image file to load.
     :return: ndarray with the loaded image.
     """
+    if path.endswith('.npy'):
+        # Load the .npy depth file
+        depth = np.load(path).astype(np.float32)  # Ensure it's float32 for accuracy
+        # Convert meters to millimeters and cast to 16-bit unsigned integer
+        im = (depth * 1000).astype(np.uint16)
+        return im
     im = imageio.imread(path)
     return im
 

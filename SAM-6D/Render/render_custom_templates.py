@@ -14,11 +14,17 @@ parser.add_argument('--colorize', default=False, help="Whether to colorize CAD m
 parser.add_argument('--base_color', default=0.05, help="The base color used in CAD model")
 args = parser.parse_args()
 
+
+
 # set the cnos camera path
 render_dir = os.path.dirname(os.path.abspath(__file__))
 cnos_cam_fpath = os.path.join(render_dir, '../Instance_Segmentation_Model/utils/poses/predefined_poses/cam_poses_level0.npy')
 
+
 bproc.init()
+
+bproc.renderer.set_render_devices(use_only_cpu=True )
+
 
 def get_norm_info(mesh_path):
     mesh = trimesh.load(mesh_path, force='mesh')

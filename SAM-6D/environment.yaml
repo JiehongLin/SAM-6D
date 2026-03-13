@@ -25,7 +25,7 @@ dependencies:
     - pandas
     - imageio
     - pyrender
-    - pytorch-lightning==1.8.1
+    - pytorch-lightning==1.8.*
     - pycocotools 
     - distinctipy
     - git+https://github.com/facebookresearch/segment-anything.git  # SAM

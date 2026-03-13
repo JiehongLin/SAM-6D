@@ -30,7 +30,8 @@ setup(
                 "-D__CUDA_NO_HALF_OPERATORS__",
                 "-D__CUDA_NO_HALF_CONVERSIONS__",
                 "-D__CUDA_NO_HALF2_OPERATORS__",
-            ]},)
+            ]
+                },)
     ],
-    cmdclass={'build_ext': BuildExtension.with_options(use_ninja=True)}
+    cmdclass={'build_ext': BuildExtension.with_options(use_ninja=False)}
 )

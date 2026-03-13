@@ -42,6 +42,27 @@ def mask_to_rle(binary_mask):
 
     return rle
 
+from pycocotools import mask as mask_utils
+
+def mask_to_rle_fast(binary_mask):
+    return mask_utils.encode(np.asfortranarray(binary_mask.astype(np.uint8)))
+
+def mask_to_rle_numpy(mask):
+
+    pixels = mask.T.flatten()  # Fortran order
+    pad = np.array([0])
+    pixels = np.concatenate([pad, pixels, pad])
+    changes = np.where(pixels[1:] != pixels[:-1])[0] + 1
+    counts = (changes[1:] - changes[:-1]).tolist()
+
+    rle = {
+        "counts": counts,
+        "size": list(mask.shape),
+    }
+
+    return rle
+
+
 
 class BatchedData:
     """
@@ -196,21 +217,43 @@ class Detections:
         return Detections(self.__dict__.copy())
 
 
+# def convert_npz_to_json(idx, list_npz_paths):
+#     npz_path = list_npz_paths[idx]
+#     detections = np.load(npz_path)
+#     results = []
+#     for idx_det in range(len(detections["bbox"])):
+#         result = {
+#             "scene_id": int(detections["scene_id"]),
+#             "image_id": int(detections["image_id"]),
+#             "category_id": int(detections["category_id"][idx_det]),
+#             "bbox": detections["bbox"][idx_det].tolist(),
+#             "score": float(detections["score"][idx_det]),
+#             "time": float(detections["time"]),
+#             "segmentation": mask_to_rle(
+#                 force_binary_mask(detections["segmentation"][idx_det])
+#             ),
+#         }
+#         results.append(result)
+#     return results
+
+from concurrent.futures import ThreadPoolExecutor
+
+def process_detection(idx_det, detections):
+    return {
+        "scene_id": int(detections["scene_id"]),
+        "image_id": int(detections["image_id"]),
+        "category_id": int(detections["category_id"][idx_det]),
+        "bbox": detections["bbox"][idx_det].tolist(),
+        "score": float(detections["score"][idx_det]),
+        "time": float(detections["time"]),
+        "segmentation": mask_to_rle(force_binary_mask(detections["segmentation"][idx_det])),
+    }
+
 def convert_npz_to_json(idx, list_npz_paths):
     npz_path = list_npz_paths[idx]
     detections = np.load(npz_path)
-    results = []
-    for idx_det in range(len(detections["bbox"])):
-        result = {
-            "scene_id": int(detections["scene_id"]),
-            "image_id": int(detections["image_id"]),
-            "category_id": int(detections["category_id"][idx_det]),
-            "bbox": detections["bbox"][idx_det].tolist(),
-            "score": float(detections["score"][idx_det]),
-            "time": float(detections["time"]),
-            "segmentation": mask_to_rle(
-                force_binary_mask(detections["segmentation"][idx_det])
-            ),
-        }
-        results.append(result)
+    
+    with ThreadPoolExecutor() as executor:
+        results = list(executor.map(lambda i: process_detection(i, detections), range(len(detections["bbox"]))))
+    
     return results

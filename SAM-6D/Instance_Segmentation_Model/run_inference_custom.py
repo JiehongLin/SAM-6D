@@ -4,7 +4,8 @@ import shutil
 from tqdm import tqdm
 import time
 import torch
-from PIL import Image
+from PIL import Image, ImageDraw
+
 import logging
 import os, sys
 import os.path as osp
@@ -32,6 +33,8 @@ from utils.bbox_utils import CropResizePad
 from model.utils import Detections, convert_npz_to_json
 from model.loss import Similarity
 from utils.inout import load_json, save_json_bop23
+import open3d as o3d
+import matplotlib.pyplot as plt
 
 inv_rgb_transform = T.Compose(
         [
@@ -43,47 +46,77 @@ inv_rgb_transform = T.Compose(
     )
 
 def visualize(rgb, detections, save_path="tmp.png"):
-    img = rgb.copy()
-    gray = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
+    img = np.array(rgb.copy())
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     img = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
-    colors = distinctipy.get_colors(len(detections))
     alpha = 0.33
 
-    best_score = 0.
-    for mask_idx, det in enumerate(detections):
-        if best_score < det['score']:
-            best_score = det['score']
-            best_det = detections[mask_idx]
+    # Sort detections by score and select top 5
+    sorted_dets = sorted(detections, key=lambda d: d['score'], reverse=True)[:5]
+    colors = distinctipy.get_colors(len(sorted_dets))
 
-    mask = rle_to_mask(best_det["segmentation"])
-    edge = canny(mask)
-    edge = binary_dilation(edge, np.ones((2, 2)))
-    obj_id = best_det["category_id"]
-    temp_id = obj_id - 1
+    legend_items = []
+    for idx, det in enumerate(sorted_dets):
+        mask = rle_to_mask(det["segmentation"])
+        edge = canny(mask)
+        edge = binary_dilation(edge, np.ones((2, 2)))
+        obj_id = det["category_id"]
+        temp_id = idx  # Use idx for color assignment
 
-    r = int(255*colors[temp_id][0])
-    g = int(255*colors[temp_id][1])
-    b = int(255*colors[temp_id][2])
-    img[mask, 0] = alpha*r + (1 - alpha)*img[mask, 0]
-    img[mask, 1] = alpha*g + (1 - alpha)*img[mask, 1]
-    img[mask, 2] = alpha*b + (1 - alpha)*img[mask, 2]   
-    img[edge, :] = 255
-    
-    img = Image.fromarray(np.uint8(img))
-    img.save(save_path)
-    prediction = Image.open(save_path)
-    
-    # concat side by side in PIL
-    img = np.array(img)
-    concat = Image.new('RGB', (img.shape[1] + prediction.size[0], img.shape[0]))
-    concat.paste(rgb, (0, 0))
-    concat.paste(prediction, (img.shape[1], 0))
+        r = int(255 * colors[temp_id][0])
+        g = int(255 * colors[temp_id][1])
+        b = int(255 * colors[temp_id][2])
+        img[mask, 0] = alpha * r + (1 - alpha) * img[mask, 0]
+        img[mask, 1] = alpha * g + (1 - alpha) * img[mask, 1]
+        img[mask, 2] = alpha * b + (1 - alpha) * img[mask, 2]
+        img[edge, :] = [r, g, b]
+
+        legend_items.append((r, g, b, det['score']))
+
+    # Convert to PIL and add legend
+    img_pil = Image.fromarray(np.uint8(img))
+    legend_height = 20 * len(legend_items) + 10
+    legend_width = 220
+    legend = Image.new('RGB', (legend_width, legend_height), (255, 255, 255))
+    draw = ImageDraw.Draw(legend)
+    for i, (r, g, b, score) in enumerate(legend_items):
+        y = 10 + i * 20
+        draw.rectangle([10, y, 30, y + 15], fill=(r, g, b))
+        draw.text((40, y), f"Score: {score:.3f}", fill=(0, 0, 0))
+
+    # Concatenate images side by side
+    concat = Image.new('RGB', (img_pil.width + legend.width, max(img_pil.height, legend.height)))
+    concat.paste(img_pil, (0, 0))
+    concat.paste(legend, (img_pil.width, 0))
+    concat.save(save_path)
     return concat
 
 def batch_input_data(depth_path, cam_path, device):
     batch = {}
     cam_info = load_json(cam_path)
-    depth = np.array(imageio.imread(depth_path)).astype(np.int32)
+    if depth_path.endswith(".png"):
+        depth = np.array(imageio.imread(depth_path)).astype(np.int32)
+    else:
+        depth = np.load(depth_path)*1000
+            # Replace NaNs and infs with 0 (or another sentinel, e.g. -1)
+        depth = np.nan_to_num(depth, nan=0.0, posinf=0.0, neginf=0.0)
+
+        # Optional: clamp unreasonable values (e.g., >10m or <0)
+        # depth = np.clip(depth, 0, 10000)
+        depth = depth.astype(np.int32) # in mm
+        print("Warning: the depth is scaled by 1000!")
+        print(f'Depth mid value in center is {depth[depth.shape[0]//2, depth.shape[1]//2]} mm')
+
+    # plot the depth image
+    plt.imshow(depth, cmap='gray')
+    plt.colorbar(label='Depth (mm)')
+    plt.title('Depth Image')
+    plt.savefig("depth_image.png")
+    plt.close()
+    
+
+
+    # depth = np.array(imageio.imread(depth_path)).astype(np.int32) if not depth_path.endswith(".npy") else (np.load(depth_path)*1000).astype(np.int32) # in mm
     cam_K = np.array(cam_info['cam_K']).reshape((3, 3))
     depth_scale = np.array(cam_info['depth_scale'])
 
@@ -92,7 +125,7 @@ def batch_input_data(depth_path, cam_path, device):
     batch['depth_scale'] = torch.from_numpy(depth_scale).unsqueeze(0).to(device)
     return batch
 
-def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, cam_path, stability_score_thresh):
+def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, cam_path, template_dir, stability_score_thresh):
     with initialize(version_base=None, config_path="configs"):
         cfg = compose(config_name='run_inference.yaml')
 
@@ -109,7 +142,7 @@ def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, c
     logging.info("Initializing model")
     model = instantiate(cfg.model)
     
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = 'cpu' #torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.descriptor_model.model = model.descriptor_model.model.to(device)
     model.descriptor_model.model.device = device
     # if there is predictor in the model, move it to device
@@ -123,7 +156,6 @@ def run_inference(segmentor_model, output_dir, cad_path, rgb_path, depth_path, c
         
     
     logging.info("Initializing template")
-    template_dir = os.path.join(output_dir, 'templates')
     num_templates = len(glob.glob(f"{template_dir}/*.npy"))
     boxes, masks, templates = [], [], []
     for idx in range(num_templates):
@@ -219,9 +251,10 @@ if __name__ == "__main__":
     parser.add_argument("--depth_path", nargs="?", help="Path to Depth image(mm)")
     parser.add_argument("--cam_path", nargs="?", help="Path to camera information")
     parser.add_argument("--stability_score_thresh", default=0.97, type=float, help="stability_score_thresh of SAM")
+    parser.add_argument("--template_dir", nargs="?", help="Path to template directory")
     args = parser.parse_args()
     os.makedirs(f"{args.output_dir}/sam6d_results", exist_ok=True)
     run_inference(
-        args.segmentor_model, args.output_dir, args.cad_path, args.rgb_path, args.depth_path, args.cam_path, 
-        stability_score_thresh=args.stability_score_thresh,
+        args.segmentor_model, args.output_dir, args.cad_path, args.rgb_path, args.depth_path, args.cam_path, args.template_dir,
+        stability_score_thresh=args.stability_score_thresh
     )
